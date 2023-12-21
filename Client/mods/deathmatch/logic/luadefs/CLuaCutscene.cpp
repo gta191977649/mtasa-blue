@@ -19,6 +19,12 @@ typedef void (*StartCutsceneFunc)();
 LoadCutsceneDataFunc LoadCutsceneDataPtr;
 StartCutsceneFunc    StartCutscenePtr;
 
+template <unsigned int address, typename... Args>
+void Call(Args... args)
+{
+    reinterpret_cast<void(__cdecl*)(Args...)>(address)(args...);
+}
+
 CLuaCutsceneDefs::CLuaCutsceneDefs()
 {
     // Assign the function pointers to the specific addresses
@@ -33,6 +39,7 @@ void CLuaCutsceneDefs::LoadFunctions()
     constexpr static const std::pair<const char*, lua_CFunction> functions[]{
         {"loadCutscene", ArgumentParser<LoadCutscene>},
         {"startCutscene", ArgumentParser<StartCutscene>},
+        {"skipCutscene", ArgumentParser<SkipCutscene>},
 
     };
 
@@ -53,18 +60,19 @@ void CLuaCutsceneDefs::AddClass(lua_State* luaVM)
 bool CLuaCutsceneDefs::LoadCutscene(std::string cutsceneName)
 {
     //CCutsceneManager::LoadCutsceneData(cutsceneName);
-    if (LoadCutsceneDataPtr)
-    {
-        LoadCutsceneDataPtr(cutsceneName.c_str());
-    }
+    Call<0x4D5E80, char const*>(cutsceneName.c_str());
     return true;
 }
 
 bool CLuaCutsceneDefs::StartCutscene()
 {
-    if (StartCutscenePtr)
-    {
-        StartCutscenePtr();
-    }
+    Call<0x5B1460>();
+    return true;
+}
+
+bool CLuaCutsceneDefs::SkipCutscene()
+{
+    Call<0x4D5ED0>();
+    Call<0x5B04D0>();
     return true;
 }

@@ -22,4 +22,5 @@ public:
 private:
     static bool LoadCutscene(std::string cutsceneName);
     static bool StartCutscene();
+    static bool SkipCutscene();
 };

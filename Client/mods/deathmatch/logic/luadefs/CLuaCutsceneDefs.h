@@ -19,4 +19,5 @@ public:
     static void LoadFunctions();
     static void AddClass(lua_State* luaVM);
     static bool LoadCutscene(std::string cutsceneName);
+    static bool StartCutscene();
 };

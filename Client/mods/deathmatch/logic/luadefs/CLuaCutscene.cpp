@@ -11,7 +11,7 @@
  *****************************************************************************/
 
 #include "StdInc.h"
-#include <game/CCutsceneManager.h>
+#include <lua/CLuaFunctionParser.h>
 
 typedef void (*LoadCutsceneDataFunc)(const char*);
 typedef void (*StartCutsceneFunc)();
@@ -32,6 +32,7 @@ void CLuaCutsceneDefs::LoadFunctions()
     // Backwards compatibility functions
     constexpr static const std::pair<const char*, lua_CFunction> functions[]{
         {"loadCutscene", ArgumentParser<LoadCutscene>},
+        {"startCutscene", ArgumentParser<StartCutscene>},
 
     };
 
@@ -51,13 +52,19 @@ void CLuaCutsceneDefs::AddClass(lua_State* luaVM)
 }
 bool CLuaCutsceneDefs::LoadCutscene(std::string cutsceneName)
 {
-
-
     //CCutsceneManager::LoadCutsceneData(cutsceneName);
     if (LoadCutsceneDataPtr)
     {
-        //LoadCutsceneDataPtr(cutsceneName);
+        LoadCutsceneDataPtr(cutsceneName.c_str());
     }
     return true;
 }
 
+bool CLuaCutsceneDefs::StartCutscene()
+{
+    if (StartCutscenePtr)
+    {
+        StartCutscenePtr();
+    }
+    return true;
+}
